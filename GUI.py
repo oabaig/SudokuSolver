@@ -9,6 +9,7 @@ WHITE = (255,255,255)
 BLACK = (0,0,0)
 FPS = 60
 
+# handles board
 class Grid:
     board = example_puzzle
 
@@ -35,6 +36,7 @@ class Grid:
             pygame.draw.line(self.win, BLACK, (i * horizontal_gap, 0), (i * horizontal_gap, self.height), thickness) # vertical lines
             pygame.draw.line(self.win, BLACK, (0, i * vertical_gap), (self.width, i * vertical_gap), thickness) # horizontal lines
 
+# handles boxes in board
 class Box:
     def __init__(self) -> None:
         pass
