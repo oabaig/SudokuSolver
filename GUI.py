@@ -8,7 +8,7 @@ NUMBER_FONT = pygame.font.SysFont('comicsans', 40)
 # END - Fonts
 
 # START - Window Properties
-WIDTH, HEIGHT = 540, 630
+WIDTH, HEIGHT = 500, 630
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 FPS = 60
 pygame.display.set_caption("Sudoku")
@@ -30,31 +30,38 @@ class Grid:
         self.height = height * 0.8
         self.win = win
         self.boxes = []
+
+        x_gap = self.width / self.cols
+        y_gap = self.height / self.rows
         
         for i in range(self.rows):
             self.boxes.append(i)
             self.boxes[i] = []
+            y_location = x_gap * i
             for j in range(self.cols):
-                self.boxes[i].append(Box(self.win, self.board[i][j], i, j, self.rows, self.cols,
-                self.width, self.height))
+                x_location = y_gap * j
+                self.boxes[i].append(Box(self.win, self.board[i][j], i, j, x_location, y_location))
 
     def draw_lines(self) -> None:
         for i in range(self.rows):
             if i == 0:
                 continue
 
-            horizontal_gap_offset = self.width / 9
-            vertical_gap_offset = self.height / 9
+            horizontal_gap_offset = self.width / self.rows
+            vertical_gap_offset = self.height / self.cols
 
             if i % 3 == 0 and i != 0:
                 thickness = 4
             else:
                 thickness = 1
 
-            pygame.draw.line(self.win, BLACK, (i * horizontal_gap_offset, 0), (i * horizontal_gap_offset, self.height), thickness) # vertical lines
-            pygame.draw.line(self.win, BLACK, (0, i * vertical_gap_offset), (self.width, i * vertical_gap_offset), thickness) # horizontal lines
+            pygame.draw.line(self.win, BLACK, (i * vertical_gap_offset, 0), 
+                (i * vertical_gap_offset, self.width), thickness) # vertical lines
+            pygame.draw.line(self.win, BLACK, (0, i * horizontal_gap_offset), 
+                (self.height, i * horizontal_gap_offset), thickness) # horizontal lines
 
-        pygame.draw.line(self.win, BLACK, (0, self.rows * vertical_gap_offset), (self.width, self.rows * vertical_gap_offset), 4)
+        pygame.draw.line(self.win, BLACK, (0, self.rows * horizontal_gap_offset), 
+            (self.height, self.rows * horizontal_gap_offset), 4)
 
     def update_board(self) -> None:
         for i in range(self.rows):
@@ -63,18 +70,13 @@ class Grid:
 
 # handles boxes in board
 class Box:
-    def __init__(self, win, value, row, col, num_rows, num_cols, screen_width, screen_height, x_lo) -> None:
+    def __init__(self, win, value, row, col, x_location, y_location) -> None:
         self.win = win
         self.row = row
         self.col = col
-        self.num_rows = num_rows
-        self.num_cols = num_cols
         self.value = value
-        self.screen_width = screen_width
-        self.screen_height = screen_height
-        self.x_offset = self.screen_width / self.num_cols
-        self.y_offset = self.screen_height / self.num_rows
-        print(self.row, self.col, self.value)
+        self.x_location = x_location
+        self.y_location = y_location
 
         if self.value == 0:
             self.usable = False
@@ -85,14 +87,11 @@ class Box:
         if not self.usable:
             return
 
-        horizontal_gap_offset = self.screen_width / self.num_rows
-        vertical_gap_offset = self.screen_height / self.num_cols
-
-        y_location = horizontal_gap_offset * (self.row)
-        x_location = vertical_gap_offset * (self.col)
+        x_offset = 20
+        y_offset = 15
 
         self.value_text = NUMBER_FONT.render(str(self.value), 1, BLACK)
-        self.win.blit(self.value_text, (x_location, y_location))
+        self.win.blit(self.value_text, (self.x_location + x_offset, self.y_location + y_offset))
 
     def set_value(self, num) -> None:
         self.value = num
