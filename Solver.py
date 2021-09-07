@@ -73,6 +73,3 @@ example_puzzle = [[0,0,0,2,6,0,7,0,1],
                   [0,0,9,3,0,0,0,7,4],
                   [0,4,0,0,5,0,0,3,6],
                   [7,0,3,0,1,8,0,0,0]]
-
-solver(example_puzzle)
-print_puzzle(example_puzzle)

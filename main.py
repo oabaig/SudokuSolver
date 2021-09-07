@@ -1,7 +1,7 @@
 import GUI, Solver, pygame
 
 def main():
-    board_gui = GUI.Grid(GUI.WIDTH, GUI.HEIGHT, GUI.WIN)
+    board_gui = GUI.Grid(GUI.WIDTH, GUI.HEIGHT, GUI.WIN, 9, 9)
     
     clock = pygame.time.Clock()
     run = True
