@@ -68,6 +68,19 @@ class Grid:
             for j in range(self.cols):
                 self.boxes[i][j].draw_text()
 
+    # returns row, col based on on position clicked
+    def clicked(self, pos):
+        if pos[0]  < self.width and pos[1] < self.height:
+            x_gap = self.width / self.cols
+            y_gap = self.height / self.rows
+            x = pos[0] // x_gap
+            y = pos[1] // y_gap
+            print("row:", y, "col:", x)
+            return (y, x)
+        else:
+            return None
+
+
 # handles boxes in board
 class Box:
     def __init__(self, win, value, row, col, x_location, y_location) -> None:
