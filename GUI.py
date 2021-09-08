@@ -141,6 +141,9 @@ class Box:
 
     def set_selected(self, isSelected) -> None:
         self.selected = isSelected
+
+    def get_value(self):
+        return self.value
     
 
 def draw_window(board) -> None:
