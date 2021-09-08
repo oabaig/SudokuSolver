@@ -1,10 +1,11 @@
 import pygame
-from Solver import example_puzzle
+from Solver import example_puzzle, solver
 
 pygame.font.init() # initializes font
 
 # START - Fonts
 NUMBER_FONT = pygame.font.SysFont('comicsans', 40)
+NUMBER_TYPED_FONT = pygame.font.SysFont('comicsans', 50)
 # END - Fonts
 
 # START - Window Properties
@@ -30,6 +31,8 @@ class Grid:
         self.height = height * 0.8
         self.win = win
         self.boxes = []
+
+        self.selected_box = None
 
         x_gap = self.width / self.cols
         y_gap = self.height / self.rows
@@ -73,13 +76,35 @@ class Grid:
         if pos[0]  < self.width and pos[1] < self.height:
             x_gap = self.width / self.cols
             y_gap = self.height / self.rows
-            x = pos[0] // x_gap
-            y = pos[1] // y_gap
+            x = int(pos[0] // x_gap)
+            y = int(pos[1] // y_gap)
             print("row:", y, "col:", x)
+
+            if self.selected_box != None:
+                self.boxes[self.selected_box[0]][self.selected_box[1]].set_selected(False)
+
+            self.selected_box = (y,x)
+            self.boxes[y][x].set_selected(True)
             return (y, x)
         else:
             return None
 
+    def type_number(self, value):
+        if self.selected_box == None:
+            return
+
+        box = self.selected_box
+        self.boxes[box[0]][box[1]].set_value(value)
+
+    def solve(self):
+        solved_board = self.board
+        solver(solved_board)
+
+        for i in range(self.rows):
+            for j in range(self.cols):
+                self.boxes[i][j].set_value(solved_board[i][j])
+        
+        
 
 # handles boxes in board
 class Box:
@@ -90,24 +115,32 @@ class Box:
         self.value = value
         self.x_location = x_location
         self.y_location = y_location
+        self.selected = False
 
         if self.value == 0:
-            self.usable = False
-        else:
             self.usable = True
+        else:
+            self.usable = False
 
     def draw_text(self) -> None:
-        if not self.usable:
+        if self.value == 0:
             return
 
         x_offset = 20
         y_offset = 15
 
-        self.value_text = NUMBER_FONT.render(str(self.value), 1, BLACK)
+        if self.usable:
+            self.value_text = NUMBER_TYPED_FONT.render(str(self.value), 1, BLACK)
+        else:
+            self.value_text = NUMBER_FONT.render(str(self.value), 1, BLACK)
         self.win.blit(self.value_text, (self.x_location + x_offset, self.y_location + y_offset))
 
     def set_value(self, num) -> None:
-        self.value = num
+        if self.usable:
+            self.value = num
+
+    def set_selected(self, isSelected) -> None:
+        self.selected = isSelected
     
 
 def draw_window(board) -> None:
